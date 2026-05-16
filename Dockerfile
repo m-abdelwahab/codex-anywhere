@@ -4,6 +4,7 @@ LABEL org.opencontainers.image.title="Codex Anywhere" \
       org.opencontainers.image.description="Persistent Railway native SSH environment for OpenAI Codex"
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV SHELL=/bin/bash
 ENV PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
