@@ -27,16 +27,6 @@ Deploy the Railway template by clicking the **Deploy** button:
 The template does not require any secrets or environment variables.
 It does require the included persistent volume mounted at `/data`; the container exits instead of storing Codex state on ephemeral disk if that mount is missing.
 
-Once Railway says the deployment is running, open the Railway project, right-click the Codex Anywhere service, and choose **Copy SSH Command**.
-
-The command will look like this:
-
-```bash
-ssh <railway-service-user>@ssh.railway.com
-```
-
-Keep this command handy. You will use the value before `@ssh.railway.com` in the next step.
-
 ## 3. Set up SSH
 
 Next, create an SSH key so your Mac can securely connect to the Railway server.
@@ -75,26 +65,13 @@ You should see output like:
 SSH key added: codex-anywhere
 ```
 
-Codex reads remote connections from your Mac's `~/.ssh/config`, so add a named SSH host now.
-
-From the Railway SSH command you copied, take the part before `@ssh.railway.com` and set it here:
+Codex reads remote connections from your Mac's `~/.ssh/config`, so add a named SSH host now:
 
 ```bash
-RAILWAY_SSH_USER="<paste-the-railway-service-user-here>"
+railway ssh config --alias codex-anywhere --identity-file ~/.ssh/id_ed25519
 ```
 
-Create the SSH config entry:
-
-```bash
-cat >> ~/.ssh/config <<EOF
-
-Host codex-anywhere
-  HostName ssh.railway.com
-  User $RAILWAY_SSH_USER
-  IdentityFile ~/.ssh/id_ed25519
-  IdentitiesOnly yes
-EOF
-```
+The command is interactive. When Railway asks what to connect to, choose the project and service from the Codex Anywhere deployment.
 
 ## 4. Connect with the Codex app
 
