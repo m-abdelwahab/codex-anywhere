@@ -2,28 +2,28 @@
 
 Run OpenAI Codex on a persistent Railway server and connect to it securely over SSH. Deploy once, then use the Codex desktop app and ChatGPT mobile app to stay attached to the same remote environment.
 
-## 1. Set up the Railway CLI
 
-In a terminal, run:
-
-```bash
-bash <(curl -fsSL railway.com/install.sh) --agents -y
-```
-
-Then log in to Railway:
-
-```bash
-railway login
-```
-
-Railway opens your browser so you can finish signing in. If you do not have a Railway account yet, you can create one during this step.
-
-## 2. Deploy the Railway template
+## 1. Deploy the Railway template
 
 Deploy the Railway template by clicking the **Deploy** button:
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/codex-anywhere?referralCode=thisismahmoud&utm_medium=integration&utm_source=template&utm_campaign=codex-anywhere)
 
+The template will build and deploy a service that has Codex installed along with a bunch of other tools. If you don't have a Railway account, you can sign up for free.
+
+## 2. Set up the Railway CLI
+
+The next step is installing the [Railway CLI](https://github.com/railwayapp/cli). In a terminal, run the following command to install the CLI with agent support configured in one step (macOS, Linux, Windows via WSL):
+
+```bash
+bash <(curl -fsSL railway.com/install.sh) --agents -y
+```
+
+Once that's done, you need log into your Railway account. You can do so by running the following command:
+
+```bash
+railway login
+```
 
 ## 3. Set up SSH
 
@@ -37,7 +37,7 @@ An SSH key has two parts:
 Create a key:
 
 ```bash
-ssh-keygen -t ed25519 -C "codex-anywhere"
+ssh-keygen -t ed25519
 ```
 
 `ssh-keygen` is interactive. Press Enter through the defaults. It looks like this:
@@ -57,13 +57,14 @@ Register the public key with Railway:
 railway ssh keys add --key ~/.ssh/id_ed25519.pub --name codex-anywhere
 ```
 
-Codex reads remote connections from your Mac's `~/.ssh/config`, so add a named SSH host now:
+Finally, you can run a command the following command that configures OpenSSH and adds a named SSH host
 
 ```bash
-railway ssh config --alias codex-anywhere --identity-file ~/.ssh/id_ed25519
+railway ssh config
 ```
 
-The command is interactive. When Railway asks what to connect to, choose the project and service from the Codex Anywhere deployment.
+The command is interactive. When Railway asks what to connect to, choose the project and service from the Codex Anywhere deployment. 
+
 
 ## 4. Connect with the Codex app
 
@@ -72,13 +73,7 @@ Open the Codex desktop app and go to:
 ```text
 Settings > Connections > SSH > Connect
 ```
-
-Codex automatically detects hosts from your SSH config. Choose:
-
-```text
-codex-anywhere
-```
-After configuration, you will need to log into Codex. 
+Codex automatically reads remote connections from your Mac's `~/.ssh/config`. Choose `codex-anywhere`. After configuration, you will need to log into Codex. 
 
 Finally, click on the "new project" button from the sidebar and choose "Remote project". After that, click on "Add project". That's it!
 
