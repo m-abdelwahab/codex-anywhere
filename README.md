@@ -24,8 +24,6 @@ Deploy the Railway template by clicking the **Deploy** button:
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/codex-anywhere?referralCode=thisismahmoud&utm_medium=integration&utm_source=template&utm_campaign=codex-anywhere)
 
-The template does not require any secrets or environment variables.
-It does require the included persistent volume mounted at `/data`; the container exits instead of storing Codex state on ephemeral disk if that mount is missing.
 
 ## 3. Set up SSH
 
@@ -33,7 +31,7 @@ Next, create an SSH key so your Mac can securely connect to the Railway server.
 
 An SSH key has two parts:
 
-- The private key stays on your Mac and should not be shared.
+- The private key stays on your Mac and **should not** be shared.
 - The public key is safe to give to Railway.
 
 Create a key:
@@ -59,12 +57,6 @@ Register the public key with Railway:
 railway ssh keys add --key ~/.ssh/id_ed25519.pub --name codex-anywhere
 ```
 
-You should see output like:
-
-```text
-SSH key added: codex-anywhere
-```
-
 Codex reads remote connections from your Mac's `~/.ssh/config`, so add a named SSH host now:
 
 ```bash
@@ -86,27 +78,15 @@ Codex automatically detects hosts from your SSH config. Choose:
 ```text
 codex-anywhere
 ```
+After configuration, you will need to log into Codex. 
 
-If Codex asks you to confirm the host, approve it. The first connection may take a moment while Codex starts its remote app server through SSH.
+Finally, click on the "new project" button from the sidebar and choose "Remote project". After that, click on "Add project". That's it!
 
-When Codex asks for a remote project folder, use:
+## Next steps
 
-```text
-/data
-```
+You can pretty much work with Codex the same way you're used to. The difference is you now have a remote machine with its own isolated resources that you can access from anywhere.
 
-This template already installs the `codex` command on the Railway server and makes it available on the remote `PATH`.
-Startup stores `/home/user` at `/data/home/user` and `/root` at `/data/root`, so shell config, CLI auth, caches, and user-local tools survive redeploys. Codex state is persisted with `CODEX_HOME=/data/.codex`; startup also links `/home/user/.codex` and `/root/.codex` there so chats, auth, config, and sessions survive even when the remote app server runs as root.
-
-Packages installed into system paths like `/usr`, `/opt`, or `/usr/local` are still part of the image, not the volume. Add those tools to the `Dockerfile` if you need them after every redeploy. User-local installs, including `npm install -g` as `user`, go under `/home/user/.local` and persist.
-
-After Codex connects, you can ask it to finish setup inside the remote machine:
-
-```text
-Run railway login --browserless and show me the login URL and code.
-```
-
-Then, if you plan to work with GitHub repositories:
+If you plan to work with GitHub repositories, you can just ask Codex:
 
 ```text
 Run gh auth login and walk me through the prompts.
@@ -117,3 +97,5 @@ Now clone your repo into the persistent `/data` folder:
 ```text
 Clone my repo into /data and inspect it.
 ```
+
+The Railway CLI and agent skills already come preconfigured. You'll also be automatically logged in after you connect, so you can just ask Codex to deploy your projects to Railway.
