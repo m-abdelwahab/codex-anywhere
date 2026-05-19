@@ -39,15 +39,19 @@ RUN curl -fsSL https://railway.com/install.sh | bash -s -- --yes --bin-dir /usr/
     && cp -a /home/user/.codex/. /opt/default-codex/ \
     && chown -R user:user /opt/default-codex
 
+ENV CODEX_HOME=/data/.codex
+ENV NPM_CONFIG_PREFIX=/home/user/.local
+ENV PATH="/home/user/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+COPY entrypoint.sh /usr/local/bin/codex-anywhere-entrypoint
+RUN chmod +x /usr/local/bin/codex-anywhere-entrypoint
+
 USER user
-WORKDIR /home/user
+WORKDIR /tmp
 
 RUN mkdir -p ~/.ssh && chmod 700 ~/.ssh
 
-COPY --chown=user:user entrypoint.sh /home/user/entrypoint.sh
-RUN chmod +x /home/user/entrypoint.sh
-
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD test -d /data || exit 1
+    CMD grep -qs " /data " /proc/mounts || exit 1
 
-ENTRYPOINT ["/home/user/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/codex-anywhere-entrypoint"]

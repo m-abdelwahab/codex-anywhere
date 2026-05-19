@@ -25,6 +25,7 @@ Deploy the Railway template by clicking the **Deploy** button:
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/codex-anywhere?referralCode=thisismahmoud&utm_medium=integration&utm_source=template&utm_campaign=codex-anywhere)
 
 The template does not require any secrets or environment variables.
+It does require the included persistent volume mounted at `/data`; the container exits instead of storing Codex state on ephemeral disk if that mount is missing.
 
 Once Railway says the deployment is running, open the Railway project, right-click the Codex Anywhere service, and choose **Copy SSH Command**.
 
@@ -118,6 +119,9 @@ When Codex asks for a remote project folder, use:
 ```
 
 This template already installs the `codex` command on the Railway server and makes it available on the remote `PATH`.
+Startup stores `/home/user` at `/data/home/user` and `/root` at `/data/root`, so shell config, CLI auth, caches, and user-local tools survive redeploys. Codex state is persisted with `CODEX_HOME=/data/.codex`; startup also links `/home/user/.codex` and `/root/.codex` there so chats, auth, config, and sessions survive even when the remote app server runs as root.
+
+Packages installed into system paths like `/usr`, `/opt`, or `/usr/local` are still part of the image, not the volume. Add those tools to the `Dockerfile` if you need them after every redeploy. User-local installs, including `npm install -g` as `user`, go under `/home/user/.local` and persist.
 
 After Codex connects, you can ask it to finish setup inside the remote machine:
 
